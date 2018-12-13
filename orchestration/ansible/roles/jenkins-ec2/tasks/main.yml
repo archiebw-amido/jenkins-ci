@@ -1,0 +1,43 @@
+---
+- name: Install python
+  yum:
+   name: python 
+   state: latest
+
+- name: Install docker
+  yum:
+    name: docker
+    state: latest
+
+- name: Install docker pip
+  pip:
+    name: docker
+    state: latest
+
+- name: Start docker
+  service:
+      name: docker
+      state: started
+
+- name: Pull docker image
+  docker_image:
+    name: abwamido/jenkins-code
+
+- name: Start the jenkins container
+  docker_container:
+    name: jenkins
+    image: abwamido/jenkins-code
+    state: started
+    devices:
+     - "/dev/sda:/dev/xvda:rwm"
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - jenkins-data:/var/jenkins_home
+
+- name: Copy JCasC yaml file
+  copy:
+    src: ../jenkins.yaml
+    dest: /var/lib/docker/volumes/jenkins-data/_data/jenkins.yaml

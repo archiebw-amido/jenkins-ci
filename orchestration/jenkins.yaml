@@ -1,0 +1,117 @@
+jenkins:
+  securityRealm:
+    azure:
+      clientId: "11fb15ac-5799-4fa8-abac-0da5e376be4c"
+      clientSecret: "[TODO:SecretManagement]"
+      tenant: "f88c76e1-2e79-4cd5-8b37-842f3f870d58"
+  systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code Plugin\n\n"
+  numExecutors: 5
+  scmCheckoutRetryCount: 2
+  mode: NORMAL
+  globalNodeProperties:
+    - envVars:
+        env:
+          - key: test
+            value: envVar
+  crumbIssuer:
+    standard:
+      excludeClientIPFromCrumb: true
+  
+  clouds:
+  - amazonEC2:
+      cloudName: "aws-archie-jenkins-slave"
+      credentialsId: "arn:aws:iam::499815288658:user/jenkins-ec2-plugin"
+      instanceCapStr: "2"
+      privateKey: "[TODO:SecretManagement]"
+      region: "eu-west-2"
+      useInstanceProfileForCredentials: false
+      templates:
+      - ami: "ami-0307e8ce88a8245d4"
+        amiType:
+          unixData:
+            sshPort: "22"
+        associatePublicIp: false
+        connectBySSHProcess: false
+        connectUsingPublicIp: false
+        customDeviceMapping: "test"
+        deleteRootOnTermination: false
+        description: "default-slave-ami"
+        ebsOptimized: false
+        iamInstanceProfile: arn:aws:iam::499815288658:role/DevopsAmido
+        idleTerminationMinutes: "30"
+        initScript: "test"
+        instanceCapStr: 2
+        jvmopts: "test"
+        labelString: "test"
+        launchTimeoutStr: "test"
+        mode: NORMAL
+        monitoring: false
+        numExecutors: 1
+        remoteAdmin: "ec2-user"
+        remoteFS: "test"
+        stopOnTerminate: false
+        securityGroups: sg-0f87c66f56c1ada10
+        subnetId: "subnet-061094a00607f3f33"
+        tags:
+          - name: "Name"
+            value: "jenkins-as-code-slave"
+        type: T1Micro
+        useDedicatedTenancy: false
+        useEphemeralDevices: false
+        usePrivateDnsName: false
+        zone: "eu-west-2a"
+
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+         - string:
+            scope: GLOBAL
+            id: slack-token
+            secret: "[TODO:SecretManagement]"
+            description: Slack token
+      - credentials:  
+        - aws:
+            accessKey: "AKIAJ7N4HQD5NK4TXRRQ"
+            description: "arn:aws:iam::499815288658:user/jenkins-ec2-plugin"
+            id: "arn:aws:iam::499815288658:user/jenkins-ec2-plugin"
+            scope: GLOBAL
+            secretKey: "[TODO:SecretManagement]"
+
+tool:
+  git:
+    installations:
+      - name: git
+        home: /usr/local/bin/git
+
+security:
+    remotingCLI:
+          enabled: false
+
+unclassified:    
+  slackNotifier:
+    baseURL: "https://amido.slack.com/services/hooks/jenkins-ci/"    
+    teamDomain: amido # i.e. your-company (just the workspace name not the full url)
+    tokenCredentialId: slack-token
+    room: archie-jenkins-test
+
+  location:
+    adminAddress: archie.brand@amido.com
+    url: http://35.177.39.238:8080
+
+jobs:
+  - script: >
+      pipelineJob('pipeline') {
+          definition {
+              cpsScm {
+                  scriptPath 'Jenkinsfile'
+                  scm {
+                    git {
+                        remote { url 'https://github.com/archiebw-amido/simple-node-js-react-npm-app.git' }
+                        branch '*/master'
+                        extensions {}
+                    }
+                  }
+              }
+          }
+      }
