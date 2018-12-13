@@ -1,6 +1,6 @@
 # Improvements
 - Ansible ec2 instance for orchestration
-- Modulalarise terraform
+- Modularise terraform
 - Secret handling for ansible/jenkins. (eg. AD)
 - Dynamic variables
 - Terraform AD in azure [https://wiki.jenkins.io/display/JENKINS/Azure+AD+Plugin]
