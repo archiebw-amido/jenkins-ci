@@ -20,7 +20,7 @@
 
 
 # Provision steps
-cd .\jenkins-ci\provisioning\
+cd ./jenkins-ci/provisioning
 terraform init
 terraform apply
 
