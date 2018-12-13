@@ -9,7 +9,7 @@
 - Dynamically load choice of jenkins plugins - add to Dockerfile and config to jenkins.yaml
 
 
-#JCasC tips
+# JCasC tips
 - Check for examples on official github
 [https://github.com/jenkinsci/configuration-as-code-plugin/tree/master/demos]
 
